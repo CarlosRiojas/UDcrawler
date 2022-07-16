@@ -346,32 +346,8 @@ public final class CrawlerConfiguration {
           profileOutputPath,
           resultPath);
     }
-    public CrawlerConfiguration read(){
-      Path inputPath = Path.of(profileOutputPath);
-      ObjectMapper objectMapper = new ObjectMapper();
-      try {
-        return objectMapper.readValue(Files.newBufferedReader(inputPath),CrawlerConfiguration.class);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
 
-    }
-    public CrawlerConfiguration load(){
-      Path inputPath = Path.of(read().getResultPath());
-       CrawlerConfiguration crawlerConfiguration = new CrawlerConfiguration(
-              startPages.stream().collect(Collectors.toUnmodifiableList()),
-              ignoredUrls.stream().map(Pattern::compile).collect(Collectors.toUnmodifiableList()),
-              ignoredWords.stream().map(Pattern::compile).collect(Collectors.toUnmodifiableList()),
-              parallelism,
-              implementationOverride,
-              maxDepth,
-              Duration.ofSeconds(timeoutSeconds),
-              popularWordCount,
-              profileOutputPath,
-              resultPath = String.valueOf(inputPath));
 
-    return crawlerConfiguration;
-    }
 
   }
 }

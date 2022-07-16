@@ -1,5 +1,6 @@
 package com.udacity.webcrawler.json;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -35,8 +36,13 @@ public final class ConfigurationLoader {
    */
   public CrawlerConfiguration load() {
     // TODO: Fill in this method.
+    try (Reader reader = Files.newBufferedReader(path)) {
+      return read(reader);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      return null;
+    }
 
-    return new CrawlerConfiguration.Builder().build();
   }
 
   /**
@@ -51,14 +57,18 @@ public final class ConfigurationLoader {
     Objects.requireNonNull(reader);
     // TODO: Fill in this method
     ObjectMapper objectMapper = new ObjectMapper();
+
+    objectMapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+
     try {
-      objectMapper.readValue(Files.newBufferedReader(jsonPath),CrawlerConfiguration.class);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      CrawlerConfiguration config;
+      config = objectMapper.readValue(reader, CrawlerConfiguration.Builder.class).build();
+      return config;
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      return null;
     }
-
-
-    return new CrawlerConfiguration.Builder().build();
   }
+  
 
 }
